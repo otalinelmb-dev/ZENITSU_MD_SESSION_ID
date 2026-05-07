@@ -5,45 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZENITSU_MD PANEL</title>
     <style>
-        body { background: #0a0a0a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .box { border: 2px solid #ffcc00; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; box-shadow: 0 0 15px #ffcc00; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ffcc00; background: #111; color: white; text-align: center; }
-        button { background: #ffcc00; color: black; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 95%; margin-top: 10px; }
-        #code-res { font-size: 28px; color: #ffcc00; margin: 15px 0; font-weight: bold; min-height: 40px; }
+        body { background: #0a0a0a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { background: #111; border: 2px solid #ffcc00; border-radius: 20px; padding: 30px; width: 350px; box-shadow: 0 0 20px #ffcc00; text-align: center; }
+        h1 { color: #ffcc00; letter-spacing: 2px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #1a1a1a; border: 1px solid #444; border-radius: 8px; color: white; text-align: center; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #ffcc00; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        #code-display { margin: 20px 0; font-size: 30px; font-weight: bold; color: #ffcc00; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>ZENITSU_MD ⚡</h1>
-        <p>Entrez votre numéro (ex: 243...)</p>
-        <input type="text" id="phone" placeholder="243XXXXXXXXX">
-        <button id="btn-pair">GÉNÉRER LE CODE</button>
-        <div id="code-res">...</div>
+    <div class="card">
+        <h1>ZENITSU-MD</h1>
+        <input type="text" id="phone" placeholder="Numéro (ex: 243...)">
+        <button id="get-code">GÉNÉRER LE CODE</button>
+        <div id="code-display">---</div>
+        <hr style="border: 0.5px solid #333; margin: 20px 0;">
+        <input type="text" id="session-id" placeholder="Collez votre Session ID">
+        <button id="activate-bot">ACTIVER LE BOT ⚡</button>
     </div>
-
     <script>
-        document.getElementById('btn-pair').addEventListener('click', function() {
-            const num = document.getElementById('phone').value;
-            const resDiv = document.getElementById('code-res');
-            
-            if(!num) return alert("Entrez un numéro !");
-            
-            resDiv.innerText = "Chargement...";
-
-            fetch('/pairing?code=' + num)
-                .then(response => response.json())
-                .then(data => {
-                    if(data.code) {
-                        resDiv.innerText = data.code;
-                    } else {
-                        resDiv.innerText = "Erreur : " + (data.error || "Inconnue");
-                    }
-                })
-                .catch(err => {
-                    resDiv.innerText = "Erreur de connexion au serveur";
-                    console.error(err);
-                });
-        });
+        document.getElementById('get-code').onclick = () => {
+            const p = document.getElementById('phone').value;
+            document.getElementById('code-display').innerText = "Connexion...";
+            fetch('/pairing?code=' + p).then(r => r.json()).then(d => {
+                document.getElementById('code-display').innerText = d.code || "Erreur";
+            });
+        };
+        document.getElementById('activate-bot').onclick = () => {
+            const s = document.getElementById('session-id').value;
+            fetch('/activate?session=' + s).then(r => r.text()).then(t => alert(t));
+        };
     </script>
 </body>
 </html>
