@@ -105,3 +105,12 @@ app.get('/pairing', async (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`🌀 Obito-MD prêt sur le port ${PORT}`));
+// À mettre à la fin de index.js
+const axios = require('axios'); // N'oublie pas de faire : npm install axios
+
+setInterval(() => {
+    axios.get('https://ton-nom-de-projet.onrender.com')
+    .then(() => console.log("Auto-ping réussi : Le bot reste éveillé 🌀"))
+    .catch(err => console.error("Erreur auto-ping"));
+}, 300000); // Toutes les 5 minutes
+
