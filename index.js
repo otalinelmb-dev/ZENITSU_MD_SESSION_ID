@@ -18,9 +18,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// --- LOGIQUE DE CRÉATION DU SOCKET (CORRIGÉE) ---
+// --- LOGIQUE DE CRÉATION DU SOCKET (OPTIMISÉE KAMUI) ---
 async function createSocket(phone, sessionsDir) {
-    // CORRECTIF 1 : Récupérer la version la plus récente de WhatsApp pour éviter le rejet
+    // Récupère la version la plus stable pour éviter le blocage
     const { version } = await fetchLatestBaileysVersion();
     const { state, saveCreds } = await useMultiFileAuthState(sessionsDir);
     const silentLogger = pino({ level: "silent" });
@@ -35,9 +35,12 @@ async function createSocket(phone, sessionsDir) {
         browser: ["Ubuntu", "Chrome", "20.0.04"],
         printQRInTerminal: false,
         markOnlineOnConnect: true,
-        // CORRECTIF 2 : getMessage est obligatoire pour compléter le handshake de chiffrement
+        // CORRECTIFS ANTI-CHARGEMENT INFINI
+        connectTimeoutMs: 60000, // Attendre 60s la réponse de WhatsApp
+        defaultQueryTimeoutMs: 0,
+        keepAliveIntervalMs: 10000,
         getMessage: async (key) => {
-            return { conversation: "" }; // Suffisant pour valider la connexion
+            return { conversation: "" }; // Valide le chiffrement
         },
     });
 
@@ -53,7 +56,7 @@ app.get('/pairing', async (req, res) => {
     const sessionsDir = path.join(__dirname, 'sessions', `session_${phone}`);
     
     try {
-        // Nettoyage radical de l'ancienne session
+        // Nettoyage pour forcer une nouvelle tentative propre
         if (await fs.pathExists(sessionsDir)) {
             await fs.remove(sessionsDir);
         }
@@ -62,8 +65,7 @@ app.get('/pairing', async (req, res) => {
         const { socket, saveCreds } = await createSocket(phone, sessionsDir);
 
         if (!socket.authState.creds.registered) {
-            // Attendre la stabilisation avant de demander le code
-            await delay(3000);
+            await delay(3000); // Stabilisation
             const pairingCode = await socket.requestPairingCode(phone);
             
             if (!res.headersSent) {
@@ -71,21 +73,21 @@ app.get('/pairing', async (req, res) => {
             }
         }
 
-        // --- GESTION DES ÉVÉNEMENTS ---
         socket.ev.on('creds.update', saveCreds);
 
         socket.ev.on('connection.update', async (update) => {
-            const { connection } = update;
+            const { connection, lastDisconnect } = update;
 
             if (connection === 'open') {
-                console.log(`✅ OBITO-MD : Connexion réussie pour ${phone}`);
+                console.log(`✅ OBITO-MD lié à ${phone}`);
                 await socket.sendMessage(socket.user.id, { 
-                    text: "🌀 *OBITO-MD : ACTIVATION RÉUSSIE*\n\nLe bot est maintenant lié avec succès via le correctif de chiffrement." 
+                    text: "🌀 *OBITO-MD : SYSTÈME ÉVEILLÉ*\n\nLa connexion est stabilisée. Votre bot est prêt." 
                 });
             }
             
             if (connection === 'close') {
-                console.log("❌ Connexion fermée.");
+                const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== 401;
+                console.log("❌ Connexion fermée. Reconnexion :", shouldReconnect);
             }
         });
 
@@ -99,18 +101,9 @@ app.get('/pairing', async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
-        if (!res.headersSent) res.status(500).json({ error: "Erreur d'invocation" });
+        console.error("Erreur:", err);
+        if (!res.headersSent) res.status(500).json({ error: "Échec" });
     }
 });
 
-app.listen(PORT, () => console.log(`🌀 Obito-MD prêt sur le port ${PORT}`));
-// À mettre à la fin de index.js
-const axios = require('axios'); // N'oublie pas de faire : npm install axios
-
-setInterval(() => {
-    axios.get('https://ton-nom-de-projet.onrender.com')
-    .then(() => console.log("Auto-ping réussi : Le bot reste éveillé 🌀"))
-    .catch(err => console.error("Erreur auto-ping"));
-}, 300000); // Toutes les 5 minutes
-
+app.listen(PORT, () => console.log(`🌀 Obito-MD actif sur port ${PORT}`));
