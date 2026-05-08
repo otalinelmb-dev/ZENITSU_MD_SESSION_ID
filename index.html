@@ -3,37 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZENITSU_MD PANEL</title>
+    <title>OBITO_MD 🌀 SHARINGAN</title>
     <style>
-        body { background: #0a0a0a; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .card { background: #111; border: 2px solid #ffcc00; border-radius: 20px; padding: 30px; width: 350px; box-shadow: 0 0 20px #ffcc00; text-align: center; }
-        h1 { color: #ffcc00; letter-spacing: 2px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #1a1a1a; border: 1px solid #444; border-radius: 8px; color: white; text-align: center; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #ffcc00; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        #code-display { margin: 20px 0; font-size: 30px; font-weight: bold; color: #ffcc00; }
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap');
+
+        :root {
+            --red: #ff0000;
+            --dark-red: #8b0000;
+            --dark: #050505;
+            --card: rgba(10, 0, 0, 0.95);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--dark);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ── ARRIÈRE-PLAN OBITO ──────────────────────────────────── */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            /* Fond avec Obito / Sharingan */
+            background: url('https://wallpapercave.com/wp/wp8955214.jpg') center/cover;
+            filter: brightness(0.2) grayscale(0.5) contrast(1.2);
+            z-index: -1;
+            animation: kamui-distort 15s infinite alternate;
+        }
+
+        @keyframes kamui-distort {
+            0% { transform: scale(1) rotate(0deg); filter: brightness(0.2) hue-rotate(0deg); }
+            100% { transform: scale(1.1) rotate(1deg); filter: brightness(0.3) hue-rotate(-20deg); }
+        }
+
+        /* ── EFFET DE DISTORSION KAMUI ────────────────────────────── */
+        .kamui-overlay {
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, transparent 30%, var(--dark) 70%);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        /* ── CONTENEUR PRINCIPAL ──────────────────────────────────── */
+        .card {
+            background: var(--card);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.15), inset 0 0 20px rgba(0, 0, 0, 1);
+            animation: fadeUp 1s ease both;
+            text-align: center;
+        }
+
+        /* Accents Sharingan sur les coins */
+        .card::before {
+            content: '🌀';
+            position: absolute;
+            top: 10px; right: 10px;
+            font-size: 20px;
+            opacity: 0.5;
+            filter: drop-shadow(0 0 5px var(--red));
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--red);
+            border-radius: 100px;
+            padding: 5px 15px;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--red);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px var(--red), 0 0 30px var(--dark-red);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        /* ── INPUTS & BOUTONS ─────────────────────────────────────── */
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--red);
+            background: rgba(255, 0, 0, 0.05);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--red), var(--dark-red));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.5);
+            filter: brightness(1.2);
+        }
+
+        /* ── ZONE DE CODE (SHARINGAN) ────────────────────────────── */
+        #code-box {
+            display: none;
+            margin-top: 30px;
+            animation: kamui-in 0.5s ease-out;
+        }
+
+        @keyframes kamui-in {
+            from { transform: scale(0) rotate(180deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .code-display {
+            background: rgba(255, 0, 0, 0.05);
+            border: 2px dashed var(--red);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--red);
+            letter-spacing: 8px;
+            text-shadow: 0 0 15px var(--red);
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 9px;
+            color: #444;
+            letter-spacing: 2px;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
+    <div id="bg-canvas"></div>
+    <div class="kamui-overlay"></div>
+
     <div class="card">
-        <h1>ZENITSU-MD</h1>
-        <input type="text" id="phone" placeholder="Numéro (ex: 243...)">
-        <button id="get-code">GÉNÉRER LE CODE</button>
-        <div id="code-display">---</div>
-        <hr style="border: 0.5px solid #333; margin: 20px 0;">
-        <input type="text" id="session-id" placeholder="Collez votre Session ID">
-        <button id="activate-bot">ACTIVER LE BOT ⚡</button>
+        <div class="hero-badge">Uchiha Legacy</div>
+        <div class="logo">OBITO-MD</div>
+        <div class="subtitle">Le Monde sous l'œil de la Lune</div>
+        
+        <input type="text" id="phone" placeholder="Numéro de l'appareil (ex: 243...)">
+        <button id="pair-btn">ÉVEILLER LE BOT 🌀</button>
+
+        <div id="code-box">
+            <div style="font-size: 10px; color: #888; margin-bottom: 10px; letter-spacing: 2px;">CODE DE JUMELAGE :</div>
+            <div class="code-display" id="display-code">----</div>
+        </div>
+
+        <div class="footer">DÉVELOPPÉ PAR JEFFREY LMB × OBITO TECH</div>
     </div>
+
     <script>
-        document.getElementById('get-code').onclick = () => {
-            const p = document.getElementById('phone').value;
-            document.getElementById('code-display').innerText = "Connexion...";
-            fetch('/pairing?code=' + p).then(r => r.json()).then(d => {
-                document.getElementById('code-display').innerText = d.code || "Erreur";
-            });
-        };
-        document.getElementById('activate-bot').onclick = () => {
-            const s = document.getElementById('session-id').value;
-            fetch('/activate?session=' + s).then(r => r.text()).then(t => alert(t));
+        const btn = document.getElementById('pair-btn');
+        const codeBox = document.getElementById('code-box');
+        const codeDisplay = document.getElementById('display-code');
+
+        btn.onclick = () => {
+            const num = document.getElementById('phone').value;
+            if(!num) return alert("Entrez un numéro pour invoquer le bot !");
+            
+            btn.innerText = "MALÉDICTION EN COURS...";
+            btn.disabled = true;
+
+            fetch('/pairing?code=' + num)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.code) {
+                        codeBox.style.display = "block";
+                        codeDisplay.innerText = data.code;
+                        btn.innerText = "ACCÈS AUTORISÉ";
+                    } else {
+                        alert("Erreur dans l'invocation");
+                        btn.disabled = false;
+                        btn.innerText = "RÉESSAYER";
+                    }
+                })
+                .catch(() => {
+                    alert("Le serveur Replit ne répond pas.");
+                    btn.disabled = false;
+                });
         };
     </script>
 </body>
